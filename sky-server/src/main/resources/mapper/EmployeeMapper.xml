@@ -2,4 +2,44 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.EmployeeMapper">
+    <insert id="insert">
+        insert into employee (id, name, username, password, phone, sex, id_number, status, create_time, update_time,
+                              create_user, update_user)
+        values (#{id}, #{name}, #{username}, #{password}, #{phone}, #{sex}, #{idNumber}, #{status}, #{createTime},
+                #{updateTime}, #{createUser}, #{updateUser});
+    </insert>
+    <update id="editPassword">
+        update employee
+        set password = #{newPassword}
+        where id = #{empId}
+    </update>
+    <select id="selectAllEmp" resultType="com.sky.entity.Employee">
+        select id,
+        name,
+        username,
+        password,
+        phone,
+        sex,
+        id_number,
+        status,
+        create_time,
+        update_time,
+        create_user,
+        update_user
+        from employee
+        <where>
+            <if test="name !=null">name like concat('%', #{name}, '%')</if>
+        </where>
+
+
+    </select>
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(*)
+        from employee
+        <where>
+
+            <if test="username != null">and username = #{username}</if>
+
+        </where>
+    </select>
 </mapper>
