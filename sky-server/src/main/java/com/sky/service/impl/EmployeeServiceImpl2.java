@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.sky.vo.EmployeeVO;
+import org.apache.poi.poifs.storage.BATBlock;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -163,7 +164,6 @@ public class EmployeeServiceImpl2 implements EmployeeService {
     public void updateEmpById(EmployeeDTO employeeDTO) {
 
 
-
         Employee employee = new Employee();
 
         BeanUtils.copyProperties(employeeDTO, employee);
@@ -175,6 +175,24 @@ public class EmployeeServiceImpl2 implements EmployeeService {
         employee.setUpdateTime(LocalDateTime.now());
         employee.setUpdateUser(BaseContext.getCurrentId());
         employeeMapper.updateById(employee);
+    }
+
+    @Override
+    public void updatePassword(PasswordEditDTO passwordEditDTO) {
+        //对旧密码加密
+        String oldPassword = DigestUtils.md5DigestAsHex(passwordEditDTO.getOldPassword().getBytes());
+        //获取堂当前登陆人的ID
+        Long id = BaseContext.getCurrentId();
+        //通过ID查询并比对旧密码是否正确
+        Employee employee = employeeMapper.selectByEmpId(id);
+        if (!Objects.equals(oldPassword, employee.getPassword())) {
+            throw new CheckException("输入的旧密码不正确，请重新输入");
+        }
+        //比对成功后将新的密码加密后存入到数据库中
+        String newPassword = DigestUtils.md5DigestAsHex(passwordEditDTO.getNewPassword().getBytes());
+        employee.setPassword(newPassword);
+        employeeMapper.updateById(employee);
+
     }
 
 }

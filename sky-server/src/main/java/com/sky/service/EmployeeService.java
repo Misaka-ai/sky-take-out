@@ -49,4 +49,9 @@ public interface EmployeeService {
      * 更据ID更新
      * */
     void updateEmpById(EmployeeDTO employeeDTO);
+
+    /*
+     * 修改密码
+     * */
+    void updatePassword(PasswordEditDTO passwordEditDTO);
 }

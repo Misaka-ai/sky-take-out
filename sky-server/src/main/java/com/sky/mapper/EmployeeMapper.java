@@ -22,8 +22,8 @@ public interface EmployeeMapper {
     /*
      * 根据ID查询
      * */
-    @Select("select * from category where id=#{empId};")
-    Employee selectByEmpId(Long empId);
+    @Select("select * from employee where id=#{id};")
+    Employee selectByEmpId(Long id);
 
     void editPassword(PasswordEditDTO passwordEditDTO);
 
