@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+import com.sky.vo.EmployeeVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -148,6 +149,14 @@ public class EmployeeServiceImpl2 implements EmployeeService {
         employee.setUpdateUser(BaseContext.getCurrentId());
         employee.setUpdateTime(LocalDateTime.now());
         employeeMapper.updateById(employee);
+    }
+
+    @Override
+    public EmployeeVO getEmpById(Long id) {
+        Employee employee = employeeMapper.getEmpById(id);
+        EmployeeVO employeeVO = new EmployeeVO();
+        BeanUtils.copyProperties(employee, employeeVO);
+        return employeeVO;
     }
 
 }

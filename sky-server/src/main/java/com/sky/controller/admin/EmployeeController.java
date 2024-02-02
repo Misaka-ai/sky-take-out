@@ -12,6 +12,7 @@ import com.sky.result.Result;
 import com.sky.service.EmployeeService;
 import com.sky.utils.JwtUtil;
 import com.sky.vo.EmployeeLoginVO;
+import com.sky.vo.EmployeeVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -115,5 +116,14 @@ public class EmployeeController {
     public Result<?> updateStatus(Long id, @PathVariable Integer status) {
         employeeService.updateStatus(id, status);
         return Result.success();
+    }
+    /*
+    * 根据ID查询
+    * */
+    @ApiOperation("根据ID查询")
+    @GetMapping("/{id}")
+    public Result<EmployeeVO> getEmpById( @PathVariable Long id){
+        EmployeeVO employeeVO=employeeService.getEmpById(id);
+        return Result.success(employeeVO);
     }
 }
