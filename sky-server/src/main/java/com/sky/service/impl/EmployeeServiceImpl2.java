@@ -159,4 +159,22 @@ public class EmployeeServiceImpl2 implements EmployeeService {
         return employeeVO;
     }
 
+    @Override
+    public void updateEmpById(EmployeeDTO employeeDTO) {
+
+
+
+        Employee employee = new Employee();
+
+        BeanUtils.copyProperties(employeeDTO, employee);
+
+        Integer count = employeeMapper.selectCount(employee);
+        if (count > 0) {
+            throw new CheckException("账号重复，请调整");
+        }
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        employeeMapper.updateById(employee);
+    }
+
 }

@@ -44,4 +44,9 @@ public interface EmployeeService {
      * 根据ID查询
      * */
     EmployeeVO getEmpById(Long id);
+
+    /*
+     * 更据ID更新
+     * */
+    void updateEmpById(EmployeeDTO employeeDTO);
 }

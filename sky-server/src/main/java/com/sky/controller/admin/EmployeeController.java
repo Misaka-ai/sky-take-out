@@ -111,7 +111,7 @@ public class EmployeeController {
      * 更新员工状态
      * */
 
-    @ApiOperation("更新员工状态")
+    @ApiOperation(value = "更新员工状态")
     @PostMapping("/status/{status}")
     public Result<?> updateStatus(Long id, @PathVariable Integer status) {
         employeeService.updateStatus(id, status);
@@ -120,10 +120,19 @@ public class EmployeeController {
     /*
     * 根据ID查询
     * */
-    @ApiOperation("根据ID查询")
+    @ApiOperation(value = "根据ID查询")
     @GetMapping("/{id}")
     public Result<EmployeeVO> getEmpById( @PathVariable Long id){
         EmployeeVO employeeVO=employeeService.getEmpById(id);
         return Result.success(employeeVO);
+    }
+    /*
+    * 更据ID更新
+    * */
+    @ApiOperation(value = "更据ID更新")
+    @PutMapping
+    public Result<?> updateEmpById(@RequestBody EmployeeDTO employeeDTO){
+        employeeService.updateEmpById(employeeDTO);
+        return Result.success();
     }
 }
