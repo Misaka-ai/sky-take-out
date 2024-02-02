@@ -41,4 +41,9 @@ public interface EmployeeMapper {
     void insert(Employee employee);
 
     List<Employee> getAllEmp(Employee employee);
+
+    /*
+     * 根据ID更新
+     * */
+    void updateById(Employee employee);
 }

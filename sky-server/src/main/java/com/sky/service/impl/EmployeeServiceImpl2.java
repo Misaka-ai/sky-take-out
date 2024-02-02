@@ -140,4 +140,14 @@ public class EmployeeServiceImpl2 implements EmployeeService {
         return pageResult;
     }
 
+    @Override
+    public void updateStatus(Long id, Integer status) {
+        Employee employee = new Employee();
+        employee.setId(id);
+        employee.setStatus(status);
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        employee.setUpdateTime(LocalDateTime.now());
+        employeeMapper.updateById(employee);
+    }
+
 }

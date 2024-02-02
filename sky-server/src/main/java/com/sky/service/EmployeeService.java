@@ -33,4 +33,9 @@ public interface EmployeeService {
      * 分页查询
      * */
     PageResult getAllEmp(EmployeePageQueryDTO employeePageQueryDTO);
+
+    /*
+     *更新员工状态
+    * */
+    void updateStatus(Long id, Integer status);
 }

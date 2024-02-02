@@ -106,4 +106,14 @@ public class EmployeeController {
         employeeService.insertEmp(employeeDTO);
         return Result.success();
     }
+    /*
+     * 更新员工状态
+     * */
+
+    @ApiOperation("更新员工状态")
+    @PostMapping("/status/{status}")
+    public Result<?> updateStatus(Long id, @PathVariable Integer status) {
+        employeeService.updateStatus(id, status);
+        return Result.success();
+    }
 }
