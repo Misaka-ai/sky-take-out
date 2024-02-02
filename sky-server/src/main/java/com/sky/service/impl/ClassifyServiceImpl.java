@@ -2,6 +2,7 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.context.BaseContext;
 import com.sky.entity.Category;
 import com.sky.mapper.ClassifyMapper;
 import com.sky.result.PageResult;
@@ -26,6 +27,7 @@ public class ClassifyServiceImpl implements ClassifyService {
         if (count > 0) {
             throw new RuntimeException("分类名称重复");
         }
+        category.setCreateUser(BaseContext.getCurrentId());
         category.setStatus(0);
         category.setCreateTime(LocalDateTime.now());
         category.setUpdateTime(LocalDateTime.now());

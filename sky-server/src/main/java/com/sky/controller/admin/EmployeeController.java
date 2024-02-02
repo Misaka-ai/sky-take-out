@@ -79,18 +79,6 @@ public class EmployeeController {
     }
 
 
-    /*
-     * 分页查询员工
-     *
-     * */
-   /* @ApiOperation("分页查询员工")
-    @GetMapping("//page")
-    public Result<PageResult> selectAllEmp(String name,
-                                           @RequestParam(defaultValue = "1") Integer page,
-                                           @RequestParam(defaultValue = "10") Integer pageSize) {
-        PageResult pageResult = employeeService.selectAllEmp(name, page, pageSize);
-        return Result.success(pageResult);
-    }*/
     @ApiOperation("分页查询")
     @GetMapping("/page")
     public Result<PageResult> getALlEmp(EmployeePageQueryDTO employeePageQueryDTO) {
@@ -117,22 +105,28 @@ public class EmployeeController {
         employeeService.updateStatus(id, status);
         return Result.success();
     }
+
     /*
-    * 根据ID查询
-    * */
+     * 根据ID查询
+     * */
     @ApiOperation(value = "根据ID查询")
     @GetMapping("/{id}")
-    public Result<EmployeeVO> getEmpById( @PathVariable Long id){
-        EmployeeVO employeeVO=employeeService.getEmpById(id);
+    public Result<EmployeeVO> getEmpById(@PathVariable Long id) {
+        EmployeeVO employeeVO = employeeService.getEmpById(id);
         return Result.success(employeeVO);
     }
+
     /*
-    * 更据ID更新
-    * */
+     * 更据ID更新
+     * */
     @ApiOperation(value = "更据ID更新")
     @PutMapping
-    public Result<?> updateEmpById(@RequestBody EmployeeDTO employeeDTO){
+    public Result<?> updateEmpById(@RequestBody EmployeeDTO employeeDTO) {
         employeeService.updateEmpById(employeeDTO);
         return Result.success();
     }
+    /*
+     * 修改密码
+     * */
+
 }
