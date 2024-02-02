@@ -8,6 +8,7 @@ import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
@@ -20,6 +21,7 @@ import com.sky.service.EmployeeService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,6 +118,26 @@ public class EmployeeServiceImpl2 implements EmployeeService {
         employee.setUpdateUser(BaseContext.getCurrentId());
         employeeMapper.insert(employee);
 
+    }
+
+    @Override
+    public PageResult getAllEmp(EmployeePageQueryDTO employeePageQueryDTO) {
+        //判断传入的Page鹤PageSize是否为空
+        Integer page = Objects.isNull(employeePageQueryDTO.getPage()) ? 1 : employeePageQueryDTO.getPage();
+        Integer pageSize = Objects.isNull(employeePageQueryDTO.getPageSize()) ? 10 : employeePageQueryDTO.getPageSize();
+        //开启分页
+        PageHelper.startPage(page, pageSize);
+        //原始查询
+        Employee employee = new Employee();
+        employee.setName(employeePageQueryDTO.getName());
+        List<Employee> employeeList = employeeMapper.getAllEmp(employee);
+        //封装数据
+        PageResult pageResult = new PageResult();
+        Page<Employee> employeePage = (Page<Employee>) employeeList;
+        pageResult.setTotal(employeePage.getTotal());
+        pageResult.setRecords(employeePage.getResult());
+
+        return pageResult;
     }
 
 }

@@ -3,6 +3,7 @@ package com.sky.controller.admin;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
@@ -81,12 +82,18 @@ public class EmployeeController {
      * 分页查询员工
      *
      * */
-    @ApiOperation("分页查询员工")
+   /* @ApiOperation("分页查询员工")
     @GetMapping("//page")
     public Result<PageResult> selectAllEmp(String name,
                                            @RequestParam(defaultValue = "1") Integer page,
                                            @RequestParam(defaultValue = "10") Integer pageSize) {
         PageResult pageResult = employeeService.selectAllEmp(name, page, pageSize);
+        return Result.success(pageResult);
+    }*/
+    @ApiOperation("分页查询")
+    @GetMapping("/page")
+    public Result<PageResult> getALlEmp(EmployeePageQueryDTO employeePageQueryDTO) {
+        PageResult pageResult = employeeService.getAllEmp(employeePageQueryDTO);
         return Result.success(pageResult);
     }
 

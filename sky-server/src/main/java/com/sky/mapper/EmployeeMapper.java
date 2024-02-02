@@ -39,4 +39,6 @@ public interface EmployeeMapper {
     Integer selectCount(Employee employeeQuery);
 
     void insert(Employee employee);
+
+    List<Employee> getAllEmp(Employee employee);
 }
