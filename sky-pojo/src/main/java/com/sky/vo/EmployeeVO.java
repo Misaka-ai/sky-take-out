@@ -1,6 +1,5 @@
-package com.sky.entity;
+package com.sky.vo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Employee implements Serializable {
+public class EmployeeVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -22,8 +21,6 @@ public class Employee implements Serializable {
     private String username;
 
     private String name;
-
-    private String password;
 
     private String phone;
 
