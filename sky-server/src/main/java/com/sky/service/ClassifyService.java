@@ -3,6 +3,8 @@ package com.sky.service;
 import com.sky.entity.Category;
 import com.sky.result.PageResult;
 
+import java.util.List;
+
 public interface ClassifyService {
     /*
      * 新增分类
@@ -29,4 +31,8 @@ public interface ClassifyService {
      * */
     void changeStatus(Integer id, Integer status);
 
+    /*
+     * 根据类型查询分类
+     * */
+    List<Category> selectByType(Integer type);
 }

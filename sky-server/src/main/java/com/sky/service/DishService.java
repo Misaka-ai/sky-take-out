@@ -4,6 +4,7 @@ import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.vo.DishVO;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -27,4 +28,14 @@ public interface DishService {
      * 批量删除
      * */
     void deleteById(List<Long> ids);
+
+    /*
+     * 根据套餐ID查询菜品
+     * */
+    List<DishVO> selectByCategoryID(Integer categoryId);
+
+    /*
+     * 修改菜品状态
+     * */
+    void updateStatus(Long id, Integer status);
 }

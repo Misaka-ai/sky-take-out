@@ -33,7 +33,8 @@ public class DishServiceImpl implements DishService {
         Integer pageSize = Objects.isNull(dishPageQueryDTO.getPageSize()) ? 10 : dishPageQueryDTO.getPageSize();
         PageHelper.startPage(page, pageSize);
         DishVO dish = new DishVO();
-        BeanUtils.copyProperties(dishPageQueryDTO, dish);
+        dish.setCategoryId(dishPageQueryDTO.getCategoryId());
+        dish.setName(dishPageQueryDTO.getName());
         //原始查询
         List<DishVO> dishes = dishMapper.pageQuery(dish);
         PageResult pageResult = new PageResult();
@@ -66,7 +67,24 @@ public class DishServiceImpl implements DishService {
 
     @Override
     public void deleteById(List<Long> ids) {
-dishMapper.deleteById(ids);
+        dishMapper.deleteById(ids);
+    }
+
+    @Override
+    public List<DishVO> selectByCategoryID(Integer categoryId) {
+
+        List<DishVO> dishVOS = dishMapper.selectByCategoryID(categoryId);
+        return dishVOS;
+    }
+
+    @Override
+    public void updateStatus(Long id, Integer status) {
+        Dish dish = new Dish();
+        dish.setId(id);
+        dish.setStatus(status);
+        dish.setUpdateTime(LocalDateTime.now());
+        dish.setUpdateUser(BaseContext.getCurrentId());
+        dishMapper.updateDish(dish);
     }
 
 }

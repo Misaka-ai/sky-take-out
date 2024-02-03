@@ -41,4 +41,8 @@ public interface ClassifyMapper {
      * 修改状态
      * */
     void changeStatus(Integer id, Integer status);
+    /*
+    * 根据类型查询分类
+    * */
+    List<Category> selectByType(Integer type);
 }

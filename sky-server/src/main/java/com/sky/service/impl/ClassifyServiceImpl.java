@@ -64,4 +64,11 @@ public class ClassifyServiceImpl implements ClassifyService {
         classifyMapper.changeStatus(id, status);
 
     }
+
+    @Override
+    public List<Category> selectByType(Integer type) {
+        List<Category> categories = classifyMapper.selectByType(type);
+
+        return categories;
+    }
 }

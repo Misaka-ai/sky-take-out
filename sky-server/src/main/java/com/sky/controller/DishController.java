@@ -64,4 +64,26 @@ public class DishController {
         dishService.deleteById(idList);
         return Result.success();
     }
+
+    /*
+     * 根据分类ID查询菜品
+     * */
+    @GetMapping("/list")
+    public Result<List<DishVO>> selectByCategoryID(@RequestParam Integer categoryId) {
+        List<DishVO> dishVOs = dishService.selectByCategoryID(categoryId);
+        return Result.success(dishVOs);
+    }
+
+    /*
+     * 修改菜品状态
+     * */
+    @PostMapping("/status/{status}")
+    public Result<?> updateStatus(Long id, @PathVariable Integer status) {
+        dishService.updateStatus(id, status);
+        return Result.success();
+    }
+    /*
+     * 添加菜品
+     * */
+
 }

@@ -18,9 +18,23 @@ public interface DishMapper {
      * */
     void updateDish(Dish dish);
 
+    /*
+     * 判断是否重复
+     * */
     Integer selcetCount(Dish dish);
 
+    /*
+     * 根据菜品ID查询菜品
+     * */
     DishVO getDish(Long id);
 
+    /*
+     * 根据id删除
+     * */
     void deleteById(List<Long> ids);
+
+    /*
+     * 根据分类ID查询
+     * */
+    List<DishVO> selectByCategoryID(Integer categoryId);
 }

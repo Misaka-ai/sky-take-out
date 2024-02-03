@@ -7,8 +7,9 @@ import com.sky.service.ClassifyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/admin/category")
 @RestController
@@ -77,5 +78,14 @@ public class ClassifyController {
                                   @PathVariable("status") Integer status) {
         classifyService.changeStatus(id, status);
         return Result.success();
+    }
+
+    /*
+     * 根据类型查询fenlei
+     * */
+    @GetMapping("/list")
+    public Result<List<Category>> selectByType(Integer type) {
+        List<Category> categorys = classifyService.selectByType(type);
+        return Result.success(categorys);
     }
 }
