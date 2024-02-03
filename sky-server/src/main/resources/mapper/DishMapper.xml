@@ -41,8 +41,8 @@
         select count(*)
         from dish
         <where>
-            <if test="name != null">name=#{name}</if>
-            <if test="id!=null">id=!={id}</if>
+            <if test="name != null">and name=#{name}</if>
+            <if test="id != null"> and id != #{id}</if>
         </where>
     </select>
     <select id="getDish" resultType="com.sky.vo.DishVO">
