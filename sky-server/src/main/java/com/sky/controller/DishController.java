@@ -7,9 +7,12 @@ import com.sky.result.Result;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -54,8 +57,11 @@ public class DishController {
      * 根据ID删除菜品
      * */
     @DeleteMapping()
-    public Result<?> deleteById(List<Long> ids) {
-
+    public Result<?> deleteById(@Param("ids") String ids) {
+        List<Long> idList = Arrays.stream(ids.split(","))
+                .map(Long::valueOf)
+                .collect(Collectors.toList());
+        dishService.deleteById(idList);
         return Result.success();
     }
 }

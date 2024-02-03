@@ -21,4 +21,6 @@ public interface DishMapper {
     Integer selcetCount(Dish dish);
 
     DishVO getDish(Long id);
+
+    void deleteById(List<Long> ids);
 }

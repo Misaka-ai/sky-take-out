@@ -64,4 +64,9 @@ public class DishServiceImpl implements DishService {
         return dishMapper.getDish(id);
     }
 
+    @Override
+    public void deleteById(List<Long> ids) {
+dishMapper.deleteById(ids);
+    }
+
 }
