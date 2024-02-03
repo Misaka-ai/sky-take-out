@@ -37,4 +37,10 @@ public interface DishMapper {
      * 根据分类ID查询
      * */
     List<DishVO> selectByCategoryID(Integer categoryId);
+
+    /*
+     *
+     * 添加菜品
+     * */
+    void insertDish(Dish dish);
 }

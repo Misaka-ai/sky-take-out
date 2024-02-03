@@ -38,7 +38,6 @@ public class SetmealServiceImpl implements SetmealService {
         PageHelper.startPage(page, pageSize);
         Setmeal setmeal = new Setmeal();
         BeanUtils.copyProperties(setmealPageQueryDTO, setmeal);
-
         //原始查询
         List<Setmeal> setmeals = setmealMapper.selcectAllSetmeal(setmeal);
         Page<Setmeal> setmealPage = (Page<Setmeal>) setmeals;

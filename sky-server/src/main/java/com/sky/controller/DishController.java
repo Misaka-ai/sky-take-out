@@ -82,8 +82,16 @@ public class DishController {
         dishService.updateStatus(id, status);
         return Result.success();
     }
+
     /*
      * 添加菜品
      * */
+    @PostMapping()
+    public Result<?> insertDish(@RequestBody DishVO dishVO) {
+        dishService.insertDish(dishVO);
+
+        return Result.success();
+
+    }
 
 }

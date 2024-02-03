@@ -87,4 +87,20 @@ public class DishServiceImpl implements DishService {
         dishMapper.updateDish(dish);
     }
 
+    @Override
+    public void insertDish(DishVO dishVO) {
+
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishVO, dish);
+        Integer count = dishMapper.selcetCount(dish);
+        if (count > 0) {
+            throw new CheckException("输入的菜品名称重复啦");
+        }
+        dish.setUpdateUser(BaseContext.getCurrentId());
+        dish.setCreateUser(BaseContext.getCurrentId());
+        dish.setCreateTime(LocalDateTime.now());
+        dish.setUpdateTime(LocalDateTime.now());
+        dishMapper.insertDish(dish);
+    }
+
 }

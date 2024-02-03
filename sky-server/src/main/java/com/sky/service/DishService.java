@@ -38,4 +38,9 @@ public interface DishService {
      * 修改菜品状态
      * */
     void updateStatus(Long id, Integer status);
+
+    /*
+     * 添加菜品
+     * */
+    void insertDish(DishVO dishVO);
 }
