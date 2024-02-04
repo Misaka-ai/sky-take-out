@@ -37,6 +37,11 @@ sky:
     admin-ttl: 7200000
     # 设置前端传递过来的令牌名称
     admin-token-name: token
+#  alioss:
+#    endpoint: https://oss-cn-shanghai.aliyuncs.com
+#    access-key-id: LTAI5tNjznCTaeCuFQY2xdSm
+#    access-key-secret: mYA3WxBiKvvLZyuIpHsIof0rsyjbTp
+#    bucket-name: mine-dev
   alioss:
     endpoint: https://oss-cn-shanghai.aliyuncs.com
     access-key-id: LTAI5tNjznCTaeCuFQY2xdSm

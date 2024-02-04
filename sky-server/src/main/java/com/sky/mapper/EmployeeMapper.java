@@ -1,5 +1,7 @@
 package com.sky.mapper;
 
+import com.sky.annotation.AutoInsertFill;
+import com.sky.annotation.AutoUpdateFill;
 import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import org.apache.ibatis.annotations.Mapper;
@@ -38,6 +40,7 @@ public interface EmployeeMapper {
      * */
     Integer selectCount(Employee employeeQuery);
 
+    @AutoInsertFill
     void insert(Employee employee);
 
     List<Employee> getAllEmp(Employee employee);
@@ -45,6 +48,7 @@ public interface EmployeeMapper {
     /*
      * 根据ID更新
      * */
+    @AutoUpdateFill
     void updateById(Employee employee);
 
     /*

@@ -2,6 +2,7 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.annotation.AutoInsertFill;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
@@ -97,6 +98,7 @@ public class EmployeeServiceImpl2 implements EmployeeService {
         return pageResult;
     }
 
+
     @Override
     public void insertEmp(EmployeeDTO employeeDTO) {
         String username = employeeDTO.getUsername();
@@ -114,10 +116,6 @@ public class EmployeeServiceImpl2 implements EmployeeService {
         String md5DigestAsHex = DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes());
         employee.setPassword(md5DigestAsHex);
         employee.setStatus(1);
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setCreateUser(BaseContext.getCurrentId());
-        employee.setUpdateUser(BaseContext.getCurrentId());
         employeeMapper.insert(employee);
 
     }
