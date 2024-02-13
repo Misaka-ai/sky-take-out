@@ -27,4 +27,6 @@ public class OrdersPageQueryDTO implements Serializable {
 
     private Long userId;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime orderTime;
 }

@@ -1,4 +1,9 @@
 sky:
+  alioss:
+    endpoint: oss-cn-shanghai.aliyuncs.com
+    bucket-name: mine-dev
+    access-key-secret: mYA3WxBiKvvLZyuIpHsIof0rsyjbTp
+    access-key-id: LTAI5tNjznCTaeCuFQY2xdSm
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     host: localhost

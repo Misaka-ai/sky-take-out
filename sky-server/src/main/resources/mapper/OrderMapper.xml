@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mapper.OrderMapper">
+    <update id="confirmOrder">
+
+        update orders
+        set status = 3
+        where id = #{id};
+    </update>
+    <update id="completeOrder">
+        update orders
+        set status=5
+        where id = #{id}
+    </update>
+    <update id="rejectionOrder">
+        update orders
+        <if test="rejectionReason != null">rejection_reason=#{rejectionReason}</if>
+        where;
+    </update>
+
+    <delete id="cancelOrder">
+        update orders
+        set cancel_reason = #{cancelReason}
+        where id = #{id};
+    </delete>
+    <select id="getOrderStatistics" resultType="com.sky.vo.OrderStatisticsVO">
+        select count(*)
+        from orders
+        where status = #{confirmed}
+           or status = #{deliveryInProgress}
+           or status = #{toBeConfirmed}
+
+
+    </select>
+    <select id="conditionSearchOrder" resultType="com.sky.entity.Orders">
+
+        select number, status, user_id, address_book_id, order_time, checkout_time, pay_method, pay_status, amount,
+        remark, phone, address, user_name, consignee, cancel_reason, rejection_reason, cancel_time,
+        estimated_delivery_time, delivery_status, delivery_time, pack_amount, tableware_number, tableware_status
+        from orders
+        <where>
+            <if test="number != null">and number = #{number}</if>
+            <if test="status != null">and status = #{status}</if>
+            <if test="orderTime != null">and order_time between #{beginTime} and #{endTime}</if>
+
+        </where>
+    </select>
+</mapper>
