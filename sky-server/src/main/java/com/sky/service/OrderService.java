@@ -37,4 +37,11 @@ public interface OrderService {
      * 订单搜索
      * */
     PageResult conditionSearchOrder(OrdersPageQueryDTO ordersPageQueryDTO);
+
+    /*
+    * 订单派送
+    * */
+    void deliveryOrder(Long id);
+
+
 }

@@ -86,6 +86,14 @@ public class OrderController {
     public Result<PageResult> conditionSearchOrder(OrdersPageQueryDTO ordersPageQueryDTO) {
         PageResult pageResult = orderService.conditionSearchOrder(ordersPageQueryDTO);
         return Result.success(pageResult);
-
+    }
+    /*
+    * 订单派送
+    * */
+    @ApiOperation(value = "订单派送")
+    @PutMapping("delivery/{id}")
+    public Result<?> deliveryOrder(@PathVariable Long id){
+orderService.deliveryOrder(id);
+        return Result.success();
     }
 }

@@ -68,4 +68,9 @@ public class OrderServiceImpl implements OrderService {
 
         return pageResult;
     }
+
+    @Override
+    public void deliveryOrder(Long id) {
+        orderMapper.deliveryOrder(id);
+    }
 }

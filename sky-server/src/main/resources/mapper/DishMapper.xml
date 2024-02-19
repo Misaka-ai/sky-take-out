@@ -78,4 +78,13 @@
         and status=#{status}
     </select>
 
+    <select id="countByMap" resultType="java.lang.Integer">
+        select count(id)
+        from dish
+        <where>
+            <if test="status !=null">and status=#{status}</if>
+            <if test="categoryId !=null">and category_id=#{categoryID}</if>
+        </where>
+    </select>
+
 </mapper>
