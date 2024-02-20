@@ -28,7 +28,7 @@ public class DishServiceImpl implements DishService {
     private final DishMapper dishMapper;
 
     private final DishFlavorMapper dishFlavorMapper;
-    ;
+
 
     public DishServiceImpl(DishMapper dishMapper, DishFlavorMapper dishFlavorMapper) {
         this.dishMapper = dishMapper;

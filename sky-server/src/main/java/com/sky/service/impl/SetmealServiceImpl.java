@@ -2,16 +2,23 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
+import com.sky.entity.SetmealDish;
 import com.sky.exception.CheckException;
+import com.sky.exception.DeletionNotAllowedException;
+import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.SetmealService;
+import com.sky.vo.SetmealVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,8 +29,10 @@ import java.util.Objects;
 public class SetmealServiceImpl implements SetmealService {
     private final SetmealMapper setmealMapper;
 
-    public SetmealServiceImpl(SetmealMapper setmealMapper) {
+
+    public SetmealServiceImpl(SetmealMapper setmealMapper, DishMapper dishMapper) {
         this.setmealMapper = setmealMapper;
+
     }
 
 
@@ -75,6 +84,7 @@ public class SetmealServiceImpl implements SetmealService {
         if (Objects.isNull(description) || description.length() > 200) {
             throw new CheckException("输入的描述不符合规范");
         }
+        //添加套餐
         Setmeal setmeal = new Setmeal();
         BeanUtils.copyProperties(setmealDTO, setmeal);
         Long id = BaseContext.getCurrentId();
@@ -83,6 +93,53 @@ public class SetmealServiceImpl implements SetmealService {
         setmeal.setCreateTime(LocalDateTime.now());
         setmeal.setUpdateTime(LocalDateTime.now());
         setmealMapper.insert(setmeal);
+        //套餐包含的菜品
+
+
+    }
+
+    @Override
+    public SetmealVO getSetmeal(Long id) {
+
+        //查询套餐
+        SetmealVO setmealVO = setmealMapper.getSetmeal(id);
+
+        //查询套餐和菜品的关联关系
+        List<SetmealDish> setmealDishes = setmealMapper.getSetmealDish(id);
+
+        setmealVO.setSetmealDishes(setmealDishes);
+
+        return setmealVO;
+    }
+
+    @Transactional
+    @Override
+    public void deleteByids(List<Long> ids) {
+        //先判断套餐是否为起售状态
+        Integer count = setmealMapper.selcectByIdsAndStatus(ids, StatusConstant.ENABLE);
+        if (count > 0) {
+            throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE);
+        }
+        //删除套餐
+        setmealMapper.deleteByids(ids);
+        //删除套餐和菜品的关联关系
+        setmealMapper.deleteBySetmealId(ids);
+
+
+    }
+
+    @Override
+    public void setStatus(Long id, Integer status) {
+        setmealMapper.setStatus(id, status);
+    }
+
+    @Override
+    public void updateSetmeal(SetmealDTO setmealDTO) {
+
+
+        //先更新套餐信息
+        setmealMapper.updateSetmeal(setmealDTO);
+
 
     }
 }

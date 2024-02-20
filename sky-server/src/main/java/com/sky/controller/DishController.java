@@ -41,7 +41,7 @@ public class DishController {
 
     /*、
      * 修改菜品
-     * 、
+     *
      */
     @PutMapping
     public Result<?> updateDish(@RequestBody DishDTO dishDTO) {
@@ -63,10 +63,6 @@ public class DishController {
      * */
     @DeleteMapping()
     public Result<?> deleteById(@RequestParam List<Long> ids) {
-      /*  List<Long> idList = Arrays.stream(ids.split(","))
-                .map(Long::valueOf)
-                .collect(Collectors.toList());
-        dishService.deleteById(idList);*/
         dishService.deleteById(ids);
         return Result.success();
     }

@@ -1,0 +1,30 @@
+package com.sky.config;
+
+import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+@Configuration
+@Slf4j
+public class RedisConfiguration {
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        log.info("开始创建redis模板对象----");
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate();
+        //设置工厂连接对象
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        //设置key的序列化
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        //设置值的序列化
+        redisTemplate.setValueSerializer(new GenericFastJsonRedisSerializer());
+
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(new GenericFastJsonRedisSerializer());
+        return redisTemplate;
+    }
+
+}
