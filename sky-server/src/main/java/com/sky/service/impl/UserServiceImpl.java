@@ -3,7 +3,9 @@ package com.sky.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.entity.Category;
 import com.sky.entity.User;
+import com.sky.mapper.CategoryMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.properties.JwtProperties;
 import com.sky.service.UserService;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -26,6 +29,8 @@ import java.util.Objects;
 public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final JwtProperties jwtProperties;
+    private final CategoryMapper categoryMapper;
+
 
     @Override
     public UserLoginVO userLogin(String code) {
@@ -42,7 +47,7 @@ public class UserServiceImpl implements UserService {
         String openid = jsonObject.getString("openid");
         User user = userMapper.selcetOne(openid);
         if (Objects.isNull(user)) {
-             user = User.builder()
+            user = User.builder()
                     .openid(openid)
                     .createTime(LocalDateTime.now())
                     .build();
@@ -63,5 +68,11 @@ public class UserServiceImpl implements UserService {
                 .token(token)
                 .build();
         return userLoginVO;
+    }
+
+    @Override
+    public List<Category> getCategorys() {
+        List<Category> categoryList = categoryMapper.getCategorys();
+        return categoryList;
     }
 }

@@ -31,4 +31,5 @@
         from user
         where openid = #{openid};
     </select>
+
 </mapper>
