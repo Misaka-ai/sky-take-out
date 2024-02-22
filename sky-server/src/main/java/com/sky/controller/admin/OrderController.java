@@ -50,7 +50,7 @@ public class OrderController {
      * 完成订单
      * */
     @ApiOperation(value = "完成订单")
-    @PutMapping("complete/{id}")
+    @PutMapping("/complete/{id}")
     public Result<?> completeOrder(@PathVariable Long id) {
         orderService.completeOrder(id);
         return Result.success();
@@ -82,7 +82,7 @@ public class OrderController {
      * 订单搜索
      * */
     @ApiOperation(value = "订单搜索")
-    @GetMapping("conditionSearch")
+    @GetMapping("/conditionSearch")
     public Result<PageResult> conditionSearchOrder(OrdersPageQueryDTO ordersPageQueryDTO) {
         PageResult pageResult = orderService.conditionSearchOrder(ordersPageQueryDTO);
         return Result.success(pageResult);
@@ -91,7 +91,7 @@ public class OrderController {
     * 订单派送
     * */
     @ApiOperation(value = "订单派送")
-    @PutMapping("delivery/{id}")
+    @PutMapping("/delivery/{id}")
     public Result<?> deliveryOrder(@PathVariable Long id){
 orderService.deliveryOrder(id);
         return Result.success();

@@ -57,15 +57,12 @@ public class OrderServiceImpl implements OrderService {
     public PageResult conditionSearchOrder(OrdersPageQueryDTO ordersPageQueryDTO) {
         PageResult pageResult = new PageResult();
 
-
         PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
         //原始查询
         List<Orders> ordersList = orderMapper.conditionSearchOrder(ordersPageQueryDTO);
         Page<Orders> ordersPage = (Page<Orders>) ordersList;
         pageResult.setRecords(ordersPage.getResult());
         pageResult.setTotal(ordersPage.getTotal());
-
-
         return pageResult;
     }
 

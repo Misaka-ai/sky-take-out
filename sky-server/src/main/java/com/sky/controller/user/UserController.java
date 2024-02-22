@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,8 +27,9 @@ public class UserController {
      * */
     @ApiOperation("用户登录")
     @PostMapping("/login")
-    public Result<UserLoginVO> userLogin(UserLoginDTO userLoginDTO) {
-        UserLoginVO userLoginVO = userService.userLogin(userLoginDTO);
+    public Result<UserLoginVO> userLogin(@RequestBody UserLoginDTO userLoginDTO) {
+        log.info("接收code:{}", userLoginDTO.getCode());
+        UserLoginVO userLoginVO = userService.userLogin(userLoginDTO.getCode());
 
         return Result.success(userLoginVO);
     }
