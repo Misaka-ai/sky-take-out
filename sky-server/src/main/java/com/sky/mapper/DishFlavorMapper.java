@@ -15,4 +15,7 @@ public interface DishFlavorMapper {
 
     @Select("select id, dish_id, name, value from dish_flavor where dish_id=#{dishId};")
     List<DishFlavor> getDishFlavor(Long dishId);
+
+    @Select("select id, dish_id, name, value from dish_flavor where dish_id=#{id};")
+    List<DishFlavor> getBydishId(Long id);
 }

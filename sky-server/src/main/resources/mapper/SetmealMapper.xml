@@ -93,4 +93,10 @@
         </foreach>
         and status = #{status}
     </select>
+    <select id="getDishItem" resultType="com.sky.vo.DishItemVO">
+        select sd.name, sd.copies, d.image, d.description
+        from setmeal_dish sd
+                 left join sky_take_out.dish d on d.id = sd.dish_id
+        where sd.setmeal_id = #{id}
+    </select>
 </mapper>

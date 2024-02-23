@@ -5,6 +5,7 @@ import com.sky.annotation.AutoUpdateFill;
 import com.sky.dto.SetmealDTO;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
+import com.sky.vo.DishItemVO;
 import com.sky.vo.SetmealVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -71,5 +72,7 @@ public interface SetmealMapper {
     void updateSetmeal(SetmealDTO setmealDTO);
 
 
-    void updateSetmealDish(SetmealDTO setmealDTO);
+//    void updateSetmealDish(SetmealDTO setmealDTO);
+
+    List<DishItemVO> getDishItem(Integer id);
 }

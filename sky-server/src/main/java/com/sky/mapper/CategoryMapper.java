@@ -8,5 +8,7 @@ import java.util.List;
 @Mapper
 public interface CategoryMapper {
 
-    List<Category> getCategorys();
+    List<Category> getCategorys(Integer type);
+
+    List<Category> getCategory(Integer categoryId);
 }

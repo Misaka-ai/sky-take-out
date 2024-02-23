@@ -4,6 +4,8 @@ import com.sky.dto.UserLoginDTO;
 import com.sky.entity.Category;
 import com.sky.result.Result;
 import com.sky.service.UserService;
+import com.sky.vo.DishItemVO;
+import com.sky.vo.DishVO;
 import com.sky.vo.UserLoginVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,11 +40,40 @@ public class UserController {
      * */
     @ApiOperation("套餐菜品查询")
     @GetMapping("/category/list")
-    public Result<List<Category>> getCategorys() {
-        List<Category> categoryList = userService.getCategorys();
+    public Result<List<Category>> getCategorys(Integer type) {
+        List<Category> categoryList = userService.getCategorys(type);
         return Result.success(categoryList);
     }
+
     /*
-    * 根据分类
+     * 根据分类id查询菜品
+     * */
+    @ApiOperation("根据分类id查询菜品")
+    @GetMapping("/dish/list")
+    public Result<List<DishVO>> getDishs(Integer categoryId) {
+        List<DishVO> dishVOList = userService.getDishs(categoryId);
+        return Result.success(dishVOList);
+    }
+
+    /*
+     *
+     *根据分类id查询套餐
+     * */
+    @ApiOperation("根据分类id查询套餐")
+    @GetMapping("/setmeal/list")
+    public Result<List<Category>> getCategory(Integer categoryId) {
+
+        List<Category> dishVOList = userService.getCategory(categoryId);
+        return Result.success(dishVOList);
+    }
+    /*
+    * 根据套餐id查询包含的菜品
     * */
+    @ApiOperation("根据套餐id查询包含的菜品")
+    @GetMapping("/setmal/dish/{id}")
+    public Result<List<DishItemVO>> getDishItem(@PathVariable Integer id){
+        List<DishItemVO> dishItemVOList=userService.getDishItem(id);
+
+        return Result.success(dishItemVOList);
+    }
 }

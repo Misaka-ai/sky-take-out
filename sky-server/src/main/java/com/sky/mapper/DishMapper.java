@@ -58,4 +58,5 @@ public interface DishMapper {
      * 查询菜品总览
      * */
     Integer countByMap(Map map);
+
 }
