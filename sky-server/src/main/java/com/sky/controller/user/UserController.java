@@ -69,11 +69,5 @@ public class UserController {
     /*
     * 根据套餐id查询包含的菜品
     * */
-    @ApiOperation("根据套餐id查询包含的菜品")
-    @GetMapping("/setmal/dish/{id}")
-    public Result<List<DishItemVO>> getDishItem(@PathVariable Integer id){
-        List<DishItemVO> dishItemVOList=userService.getDishItem(id);
 
-        return Result.success(dishItemVOList);
-    }
 }

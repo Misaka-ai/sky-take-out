@@ -1,13 +1,12 @@
 package com.sky.mapper;
 
+import com.github.pagehelper.Page;
 import com.sky.dto.GoodsSalesDTO;
-import com.sky.dto.OrdersCancelDTO;
 import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import com.sky.vo.OrderStatisticsVO;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.time.LocalDateTime;
@@ -16,10 +15,7 @@ import java.util.Map;
 
 @Mapper
 public interface OrderMapper {
-    /*
-     * 取消订单
-     * */
-    void cancelOrder(OrdersCancelDTO ordersCancelDTO);
+
 
     /*
      *接单
@@ -34,7 +30,6 @@ public interface OrderMapper {
     /*
      * 各个状态的订单数量统计
      * */
-
     OrderStatisticsVO getOrderStatistics();
 
     /*
@@ -62,8 +57,24 @@ public interface OrderMapper {
      * 根据动态条件
      * */
     Double sumByMap(Map map);
-/*
-* top10商品销量统计
-* */
+
+    /*
+     * top10商品销量统计
+     * */
     List<GoodsSalesDTO> selectGoodsSales(LocalDateTime beginTime, LocalDateTime endTime);
+
+    void submit(Orders orders);
+
+    Orders selectOne(Orders ordersQuery);
+
+    void updateById(Orders orders);
+
+    Page<Orders> selectByStatus(Orders orders);
+
+    Orders selectById(Orders ordersQuery);
+
+    /*
+     * 取消订单
+     * */
+    void cancelById(Orders orders);
 }

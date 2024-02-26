@@ -15,7 +15,9 @@ import com.sky.mapper.DishMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,17 +25,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+@RequiredArgsConstructor
 @Service
 public class DishServiceImpl implements DishService {
     private final DishMapper dishMapper;
 
     private final DishFlavorMapper dishFlavorMapper;
+    private final RedisTemplate redisTemplate;
 
-
-    public DishServiceImpl(DishMapper dishMapper, DishFlavorMapper dishFlavorMapper) {
-        this.dishMapper = dishMapper;
-        this.dishFlavorMapper = dishFlavorMapper;
-    }
 
     @Override
     public PageResult pageDish(DishPageQueryDTO dishPageQueryDTO) {
@@ -91,7 +90,7 @@ public class DishServiceImpl implements DishService {
     @Override
     @Transactional
     public void deleteById(List<Long> ids) {
-        Integer count = dishMapper.selcetCountByIdsAndStatus(ids, StatusConstant.ENABLE);
+        Integer count = dishMapper.selectCountByIdsAndStatus(ids, StatusConstant.ENABLE);
         if (count > 0) {
             throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
         }
@@ -120,22 +119,25 @@ public class DishServiceImpl implements DishService {
 
     @Override
     @Transactional
-    public void insertDish(DishVO dishVO) {
+    public void insertDish(DishDTO dishDTO) {
 
         Dish dish = new Dish();
-        BeanUtils.copyProperties(dishVO, dish);
+        BeanUtils.copyProperties(dishDTO, dish);
         Integer count = dishMapper.selcetCount(dish);
         if (count > 0) {
             throw new CheckException(MessageConstant.DISH_CHECK);
         }
 
         dishMapper.insertDish(dish);
-        List<DishFlavor> flavors = dishVO.getFlavors();
+        List<DishFlavor> flavors = dishDTO.getFlavors();
         if (Objects.nonNull(flavors) && !flavors.isEmpty()) {
             flavors.forEach(item -> item.setDishId(dish.getId()));
             dishFlavorMapper.insert(flavors);
-
         }
+        //删除缓存
+        redisTemplate.delete("USER:DISH:"+dishDTO.getCategoryId());
     }
+
+
 
 }

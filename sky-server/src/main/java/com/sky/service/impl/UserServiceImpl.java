@@ -17,7 +17,11 @@ import com.sky.vo.DishVO;
 import com.sky.vo.UserLoginVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -36,6 +40,7 @@ public class UserServiceImpl implements UserService {
 
     private final DishFlavorMapper dishFlavorMapper;
     private final WeChatProperties weChatProperties;
+    private final RedisTemplate<String, Object> redisTemplate;
 
 
     @Override
@@ -81,10 +86,22 @@ public class UserServiceImpl implements UserService {
         return categoryMapper.getCategorys(type);
     }
 
+
     @Override
     public List<DishVO> getDishs(Integer categoryId) {
+
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+        String json = (String) valueOperations.get("USER:DISH:" + categoryId);
+        if (StringUtils.hasText(json)) {
+            //有直接返回
+            return JSON.parseArray(json, DishVO.class);
+        }
+        //没有，查库
         //根据分类查询菜品
         List<DishVO> dishVOList = dishMapper.selectByCategoryID(categoryId);
+        //首次缓存
+        valueOperations.set("USER:DISH:" + categoryId, JSON.toJSONString(dishVOList));
+
         //通过获得菜品Id来查询菜品口味
         for (DishVO dishVO : dishVOList) {
             List<DishFlavor> dishFlavors = dishFlavorMapper.getBydishId(dishVO.getId());
@@ -98,14 +115,10 @@ public class UserServiceImpl implements UserService {
      *
      *根据分类id查询套餐
      * */
+    @Cacheable(cacheNames = "USER:SETMEAL",key = "#categoryId")
     @Override
     public List<Category> getCategory(Integer categoryId) {
         return categoryMapper.getCategory(categoryId);
     }
 
-    @Override
-    public List<DishItemVO> getDishItem(Integer id) {
-
-        return setmealMapper.getDishItem(id);
-    }
 }

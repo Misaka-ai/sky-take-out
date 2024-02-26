@@ -3,7 +3,6 @@ package com.sky.mapper;
 import com.sky.annotation.AutoInsertFill;
 import com.sky.annotation.AutoUpdateFill;
 import com.sky.entity.Dish;
-import com.sky.vo.DishOverViewVO;
 import com.sky.vo.DishVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -52,11 +51,13 @@ public interface DishMapper {
     @AutoInsertFill
     void insertDish(Dish dish);
 
-    Integer selcetCountByIdsAndStatus(List<Long> ids, Integer status);
+    Integer selectCountByIdsAndStatus(List<Long> ids, Integer status);
 
     /*
      * 查询菜品总览
      * */
     Integer countByMap(Map map);
 
+    @Select("select * from dish where id=#{dishID};")
+    Dish selectById(Long dishId);
 }

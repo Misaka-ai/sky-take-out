@@ -8,17 +8,16 @@ import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.OrderService;
 import com.sky.vo.OrderStatisticsVO;
+import com.sky.vo.OrderVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@RestController("AdminController")
 @Api(tags = "订单管理")
 @Slf4j
 @RequestMapping("/admin/order")
-
-
 public class OrderController {
     private final OrderService orderService;
 
@@ -64,7 +63,6 @@ public class OrderController {
     @GetMapping("/statistics")
     public Result<OrderStatisticsVO> getOrderStatistics() {
         OrderStatisticsVO orderStatisticsVO = orderService.getOrderStatistics();
-
         return Result.success(orderStatisticsVO);
     }
 
@@ -87,13 +85,25 @@ public class OrderController {
         PageResult pageResult = orderService.conditionSearchOrder(ordersPageQueryDTO);
         return Result.success(pageResult);
     }
+
     /*
-    * 订单派送
-    * */
+     * 订单派送
+     * */
     @ApiOperation(value = "订单派送")
     @PutMapping("/delivery/{id}")
-    public Result<?> deliveryOrder(@PathVariable Long id){
-orderService.deliveryOrder(id);
+    public Result<?> deliveryOrder(@PathVariable Long id) {
+        orderService.deliveryOrder(id);
         return Result.success();
     }
+
+    /*
+     * 查看订单详情
+     * */
+    @ApiOperation("查看订单详情")
+    @GetMapping("/details/{id}")
+    public Result<OrderVO> orderDetails(@PathVariable Long id) {
+        OrderVO orderVO = orderService.orderDetail(id);
+        return Result.success(orderVO);
+    }
+
 }

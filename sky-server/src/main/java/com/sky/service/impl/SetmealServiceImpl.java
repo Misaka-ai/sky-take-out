@@ -4,142 +4,141 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.StatusConstant;
-import com.sky.context.BaseContext;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
-import com.sky.exception.CheckException;
-import com.sky.exception.DeletionNotAllowedException;
+import com.sky.exception.SetmealEnableFailedException;
 import com.sky.mapper.DishMapper;
+import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.SetmealService;
 import com.sky.vo.SetmealVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+
+/**
+ * SetmealServiceImpl
+ *
+ * @author liliudong
+ * @version 1.0
+ * @description SetmealService
+ * @date 2023/7/31 18:52
+ */
 @Service
+@RequiredArgsConstructor
 public class SetmealServiceImpl implements SetmealService {
+
     private final SetmealMapper setmealMapper;
 
+    private final SetmealDishMapper setmealDishMapper;
 
-    public SetmealServiceImpl(SetmealMapper setmealMapper, DishMapper dishMapper) {
-        this.setmealMapper = setmealMapper;
-
-    }
-
+    private final DishMapper dishMapper;
 
     @Override
-    public PageResult selcectAllSetmeal(SetmealPageQueryDTO setmealPageQueryDTO) {
-        PageResult pageResult = new PageResult();
-        //判断传入的page与pageSize的值是否为空
-        Integer page = Objects.isNull(setmealPageQueryDTO.getPage()) ? 1 : setmealPageQueryDTO.getPage();
-        Integer pageSize = Objects.isNull(setmealPageQueryDTO.getPageSize()) ? 10 : setmealPageQueryDTO.getPageSize();
-
-        //开启分页
-        PageHelper.startPage(page, pageSize);
+    public List<Setmeal> listByCategoryId(Integer categoryId) {
         Setmeal setmeal = new Setmeal();
-        BeanUtils.copyProperties(setmealPageQueryDTO, setmeal);
-        //原始查询
-        List<Setmeal> setmeals = setmealMapper.selcectAllSetmeal(setmeal);
-        Page<Setmeal> setmealPage = (Page<Setmeal>) setmeals;
-
-        pageResult.setRecords(setmealPage.getResult());
-        pageResult.setTotal(setmealPage.getTotal());
-
-
-        return pageResult;
+        setmeal.setCategoryId(categoryId);
+        return setmealMapper.selectList(setmeal);
     }
 
     @Override
-    public void addSetmeal(SetmealDTO setmealDTO) {
-        //判断套餐餐名称是否为空，长度是否符合标准
-        String name = setmealDTO.getName();
-        if (Objects.isNull(name) || name.length() < 2 || name.length() > 20) {
-            throw new CheckException("输入的套餐名称不符合规范");
-        }
-        //判断套餐名称是否重复
-        Integer count = setmealMapper.selcetByname(name);
-        if (count > 0) {
-            throw new CheckException("输入的套餐名称重复");
-        }
-        //判断价格是否为空并且是1-8位的数字并可有2位小数
-        BigDecimal price = setmealDTO.getPrice();
-        if (Objects.isNull(price) || price.toString().length() < 1 || price.toString().length() > 8) {
-            throw new CheckException("输入的价格不符合规范");
-        }
-//        判断价格是否为数字,可能有2位小数
-        if (!price.toString().matches("^[0-9]+(.[0-9]{2})?$")) {
-            throw new CheckException("输入的价格不符合规范");
-        }
-        //判断描述是否长度是否大于200
-        String description = setmealDTO.getDescription();
-        if (Objects.isNull(description) || description.length() > 200) {
-            throw new CheckException("输入的描述不符合规范");
-        }
-        //添加套餐
+    public List<SetmealDish> listDishById(Long setmealId) {
+        List<SetmealDish> setmealDishList = setmealDishMapper.selectListBySetmealId(setmealId);
+        return setmealDishList;
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void create(SetmealDTO setmealDTO) {
         Setmeal setmeal = new Setmeal();
         BeanUtils.copyProperties(setmealDTO, setmeal);
-        Long id = BaseContext.getCurrentId();
-        setmeal.setCreateUser(id);
-        setmeal.setUpdateUser(id);
-        setmeal.setCreateTime(LocalDateTime.now());
-        setmeal.setUpdateTime(LocalDateTime.now());
+        setmeal.setStatus(StatusConstant.DISABLE);
+        // 新增套餐，主键返回
         setmealMapper.insert(setmeal);
-        //套餐包含的菜品
-
-
+        // 新增套餐下的菜品
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+        insertBatchSetmealDish(setmeal.getId(), setmealDishes);
     }
 
     @Override
-    public SetmealVO getSetmeal(Long id) {
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteByIds(List<Long> ids) {
+        Integer count = setmealMapper.selectCountByIdsAndStatus(ids, StatusConstant.ENABLE);
+        if (count > 0) {
+            throw new SetmealEnableFailedException(MessageConstant.SETMEAL_ON_SALE);
+        }
+        // 删除套餐
+        setmealMapper.deleteByIds(ids);
+        // 删除套餐关联的菜品
+        setmealDishMapper.deleteBySetmealIds(ids);
+    }
 
-        //查询套餐
-        SetmealVO setmealVO = setmealMapper.getSetmeal(id);
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateById(SetmealDTO setmealDTO) {
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO, setmeal);
+        // 更新套餐
+        setmealMapper.updateById(setmeal);
+        // 清空套餐关联的菜品
+        setmealDishMapper.deleteBySetmealIds(Collections.singletonList(setmealDTO.getId()));
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+        insertBatchSetmealDish(setmeal.getId(), setmealDishes);
+    }
 
-        //查询套餐和菜品的关联关系
-        List<SetmealDish> setmealDishes = setmealMapper.getSetmealDish(id);
+    @Override
+    public void updateStatusById(Long id, Integer status) {
+        // 当套餐中存在菜品未起售，则不允许起售套餐
+        if (Objects.equals(StatusConstant.ENABLE, status)) {
+            Integer countDishBySetmealIdAndDisenble = dishMapper.selectCountByIdsAndStatus(Collections.singletonList(id), StatusConstant.DISABLE);
+            if (countDishBySetmealIdAndDisenble > 0) {
+                throw new SetmealEnableFailedException(MessageConstant.SETMEAL_ENABLE_FAILED);
+            }
+        }
+        Setmeal setmeal = new Setmeal();
+        setmeal.setId(id);
+        setmeal.setStatus(status);
+        setmealMapper.updateById(setmeal);
+    }
 
-        setmealVO.setSetmealDishes(setmealDishes);
+    @Override
+    public PageResult page(SetmealPageQueryDTO setmealPageQueryDTO) {
+        PageHelper.startPage(setmealPageQueryDTO.getPage(), setmealPageQueryDTO.getPageSize());
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealPageQueryDTO, setmeal);
+        Integer categoryId = setmealPageQueryDTO.getCategoryId();
+        setmeal.setCategoryId(categoryId);
+        setmeal.setName(setmealPageQueryDTO.getName());
+        Page<Setmeal> page = setmealMapper.selectPage(setmeal);
+        return new PageResult(page.getTotal(), page.getResult());
+    }
 
+    @Override
+    public SetmealVO queryById(Long id) {
+        // 查询套餐
+        Setmeal setmeal = setmealMapper.selectById(id);
+        // 查询套餐下的菜品
+        List<SetmealDish> setmealDishList = setmealDishMapper.selectListBySetmealId(id);
+        SetmealVO setmealVO = new SetmealVO();
+        BeanUtils.copyProperties(setmeal, setmealVO);
+        setmealVO.setSetmealDishes(setmealDishList);
         return setmealVO;
     }
 
-    @Transactional
-    @Override
-    public void deleteByids(List<Long> ids) {
-        //先判断套餐是否为起售状态
-        Integer count = setmealMapper.selcectByIdsAndStatus(ids, StatusConstant.ENABLE);
-        if (count > 0) {
-            throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE);
+    private void insertBatchSetmealDish(Long setmealId, List<SetmealDish> setmealDishes) {
+        if (setmealDishes != null && setmealDishes.size() > 0) {
+            setmealDishes.forEach(item -> item.setSetmealId(setmealId));
+            setmealDishMapper.insertBatch(setmealDishes);
         }
-        //删除套餐
-        setmealMapper.deleteByids(ids);
-        //删除套餐和菜品的关联关系
-        setmealMapper.deleteBySetmealId(ids);
-
-
-    }
-
-    @Override
-    public void setStatus(Long id, Integer status) {
-        setmealMapper.setStatus(id, status);
-    }
-
-    @Override
-    public void updateSetmeal(SetmealDTO setmealDTO) {
-
-
-        //先更新套餐信息
-        setmealMapper.updateSetmeal(setmealDTO);
-
-
     }
 }

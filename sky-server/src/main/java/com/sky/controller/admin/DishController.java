@@ -90,8 +90,8 @@ public class DishController {
      * 添加菜品
      * */
     @PostMapping()
-    public Result<?> insertDish(@RequestBody DishVO dishVO) {
-        dishService.insertDish(dishVO);
+    public Result<?> insertDish(@RequestBody DishDTO dishDTO) {
+        dishService.insertDish(dishDTO);
 
         return Result.success();
 

@@ -4,7 +4,6 @@ import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.vo.DishVO;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -42,5 +41,5 @@ public interface DishService {
     /*
      * 添加菜品
      * */
-    void insertDish(DishVO dishVO);
+    void insertDish(DishDTO dishDTO);
 }

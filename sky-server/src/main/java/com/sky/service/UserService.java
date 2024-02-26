@@ -29,8 +29,5 @@ public interface UserService {
      *根据分类id查询套餐
      * */
     List<Category> getCategory(Integer categoryId);
-    /*
-     * 根据套餐id查询包含的菜品
-     * */
-    List<DishItemVO> getDishItem(Integer id);
+   
 }

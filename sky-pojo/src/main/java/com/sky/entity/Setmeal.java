@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ public class Setmeal implements Serializable {
     private Long id;
 
     //分类id
-    private Long categoryId;
+    private Integer categoryId;
 
     //套餐名称
     private String name;

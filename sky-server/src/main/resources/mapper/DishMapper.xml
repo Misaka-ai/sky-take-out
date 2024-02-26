@@ -68,7 +68,7 @@
         from dish
         where category_id = #{categoryId}
     </select>
-    <select id="selcetCountByIdsAndStatus" resultType="java.lang.Integer">
+    <select id="selectCountByIdsAndStatus" resultType="java.lang.Integer">
         select count(*)
         from dish
         where id in
