@@ -1,5 +1,6 @@
 package com.sky.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
@@ -15,29 +16,33 @@ import com.sky.mapper.OrderMapper;
 import com.sky.mapper.OrederDetailMapper;
 import com.sky.mapper.ShopMapper;
 import com.sky.result.PageResult;
+import com.sky.server.WebSocketServer;
 import com.sky.service.OrderService;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
+import com.sky.vo.TurnoverReportVO;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class OrderServiceImpl implements OrderService {
     private OrderMapper orderMapper;
     private OrederDetailMapper orederDetailMapper;
     private ShopMapper shopMapper;
     private AddressBookMapper addressBookMapper;
+    private WebSocketServer webSocketServer;
 
 
     @Override
@@ -52,6 +57,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void confirmOrder(OrdersConfirmDTO ordersConfirmDTO) {
+
         orderMapper.confirmOrder(ordersConfirmDTO);
     }
 
@@ -79,11 +85,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public PageResult conditionSearchOrder(OrdersPageQueryDTO ordersPageQueryDTO) {
         PageResult pageResult = new PageResult();
-
         PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
         //原始查询
-
-
         List<Orders> ordersList = orderMapper.conditionSearchOrder(ordersPageQueryDTO);
         Page<Orders> ordersPage = (Page<Orders>) ordersList;
         pageResult.setRecords(ordersPage.getResult());
@@ -93,7 +96,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deliveryOrder(Long id) {
-        orderMapper.deliveryOrder(id);
+        Orders orders = new Orders();
+        orders.setId(id);
+        orderMapper.deliveryOrder(orders);
     }
 
     @Override
@@ -120,21 +125,17 @@ public class OrderServiceImpl implements OrderService {
         orders.setUserId(BaseContext.getCurrentId());
         orders.setAddressBookId(ordersSubmitDTO.getAddressBookId());
         orders.setOrderTime(LocalDateTime.now());
-
         orders.setPayMethod(ordersSubmitDTO.getPayMethod());
         orders.setPayStatus(Orders.UN_PAID);
         //
         BigDecimal amount = new BigDecimal(0);
-
         for (ShoppingCart shoppingCart : shoppingCarts) {
             Integer number1 = shoppingCart.getNumber();
             BigDecimal amount1 = shoppingCart.getAmount();
             amount = amount.add(amount1.multiply(new BigDecimal(number1)));
-
         }
         orders.setAmount(amount);
         orders.setRemark(ordersSubmitDTO.getRemark());
-        //
         orders.setUserName(addressBook.getPhone());
         orders.setPhone(addressBook.getPhone());
         String adress = addressBook.getProvinceName() + addressBook.getCityName() + addressBook.getDistrictName() + addressBook.getDetail();
@@ -150,7 +151,6 @@ public class OrderServiceImpl implements OrderService {
         //订单
         orderMapper.submit(orders);
         //订单详情
-
         List<OrderDetail> orderDetailList = shoppingCarts.stream()
                 .map(shoppingCart -> {
                     OrderDetail orderDetail = new OrderDetail();
@@ -166,13 +166,12 @@ public class OrderServiceImpl implements OrderService {
         orderSubmitVO.setOrderNumber(orders.getNumber());
         orderSubmitVO.setOrderAmount(orders.getAmount());
         orderSubmitVO.setOrderTime(orders.getOrderTime());
-
         return orderSubmitVO;
     }
 
     @Override
-    public void payment(OrdersPageQueryDTO ordersPageQueryDTO) {
-
+    public void payment(OrdersDTO ordersDTO) {
+        paySuccess(ordersDTO.getNumber());
     }
 
     @Override
@@ -193,6 +192,12 @@ public class OrderServiceImpl implements OrderService {
         orders.setCheckoutTime(LocalDateTime.now());
         orders.setPayStatus(2);
         orderMapper.updateById(orders);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("type", 1);
+        map.put("orderId", orders.getId());
+        map.put("content", "订单来了");
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
+
 
     }
 
@@ -272,6 +277,43 @@ public class OrderServiceImpl implements OrderService {
 
         return orderVO;
 
+    }
+
+    @Override
+    public void reminder(Long orderId) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("type", 1);
+        map.put("orderId", orderId);
+        map.put("content", "催单来了");
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
+    }
+
+    @Override
+    public TurnoverReportVO ordersStatistics(LocalDate begin, LocalDate end) {
+        //目标：根据时间区间查询出营业额
+        ArrayList<LocalDate> localDates = new ArrayList<>();
+        if (begin.isEqual(end)) {
+            localDates.add(begin);
+        } else {
+            localDates.add(begin);
+            LocalDate nextDate = begin.plusDays(1);
+            localDates.add(nextDate);
+            while (!nextDate.isEqual(end)) {
+                nextDate = nextDate.plusDays(1);
+                localDates.add(nextDate);
+            }
+
+        }
+        List<Map<String, Object>> result = orderMapper.selectTurnoverStatistics(localDates);
+        log.info(result.toString());
+
+        String datelist = result.stream().map(item -> (String) item.get("time")).collect(Collectors.joining(","));
+        String turnoverList = result.stream().map(item -> (BigDecimal) item.get("amount")).map(BigDecimal::toString).collect(Collectors.joining(","));
+        TurnoverReportVO turnoverReportVO = new TurnoverReportVO();
+        turnoverReportVO.setDateList(datelist);
+        turnoverReportVO.setTurnoverList(turnoverList);
+
+        return turnoverReportVO;
     }
 
 }

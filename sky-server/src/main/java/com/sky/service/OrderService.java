@@ -5,6 +5,9 @@ import com.sky.result.PageResult;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
+import com.sky.vo.TurnoverReportVO;
+
+import java.time.LocalDate;
 
 public interface OrderService {
     /*
@@ -47,7 +50,7 @@ public interface OrderService {
      * */
     OrderSubmitVO submit(OrdersSubmitDTO ordersSubmitDTO);
 
-    void payment(OrdersPageQueryDTO ordersPageQueryDTO);
+    void payment(OrdersDTO ordersDTO);
 
     void paySuccess(String number);
 
@@ -72,4 +75,14 @@ public interface OrderService {
      *
      * */
     OrderVO orderDetail(Long id);
+
+    /*
+     * 催单
+     * */
+    void reminder(Long orderId);
+
+    /*
+    * 营业额统计
+    * */
+    TurnoverReportVO ordersStatistics(LocalDate begin, LocalDate end);
 }

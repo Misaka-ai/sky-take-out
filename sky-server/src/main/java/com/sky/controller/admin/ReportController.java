@@ -9,6 +9,7 @@ import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,27 +17,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @RequestMapping("/admin/report")
 @Api(tags = "数据统计接口")
 @Slf4j
 @RestController
+@AllArgsConstructor
 public class ReportController {
     private final ReportService reportService;
+    private final OrderService orderService;
 
-    public ReportController(ReportService reportService) {
-        this.reportService = reportService;
-    }
 
     /*
      *营业额统计
      * */
     @ApiOperation("营业额统计")
-    @GetMapping("/turnoverStatistics")
-    public Result<TurnoverReportVO> ordersStatistics(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
+    @GetMapping("turnoverStatistics")
+    /*public Result<TurnoverReportVO> ordersStatistics(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
                                                      @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end) {
         TurnoverReportVO turnoverReportVO = reportService.ordersStatistics(begin, end);
+        return Result.success(turnoverReportVO);
+    }*/
+    public Result<TurnoverReportVO> ordersuserStatistics(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
+                                                         @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end) {
+        TurnoverReportVO turnoverReportVO = orderService.ordersStatistics(begin, end);
         return Result.success(turnoverReportVO);
     }
 

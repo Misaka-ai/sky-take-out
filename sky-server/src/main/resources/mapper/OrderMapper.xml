@@ -72,6 +72,16 @@
         </set>
         where id=#{id}
     </update>
+    <update id="updateByStatusBeforeTime">
+        update orders
+        set status = 6
+        where status=#{pendingPayment} and order_time <![CDATA[<]]> #{orderTime}
+    </update>
+    <update id="update">
+        update orders
+        set status= 5
+        where status = #{deliveryInProgress}
+    </update>
     <select id="getOrderStatistics" resultType="com.sky.vo.OrderStatisticsVO">
         #根据状态进行分组
         SELECT SUM(IF(status = 3, 1, 0)) as confirmed,
@@ -190,5 +200,19 @@
                tableware_status
         from orders
         where id = #{id}
+    </select>
+    <select id="selectTurnoverStatistics" resultType="java.util.Map">
+        select temp.time,
+        ifnull(
+        (select sum(amount)
+        from orders
+        where order_time between temp.time and date_add(temp.time, interval 1 day)
+        and pay_status = 1),0
+        ) amount
+        from (
+        <foreach collection="localDates" item="localDate" separator=" union all " open="(" close=")">
+            select #{localDate} time
+        </foreach>
+        ) temp;
     </select>
 </mapper>

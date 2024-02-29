@@ -9,7 +9,9 @@ import com.sky.vo.OrderStatisticsVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Update;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +48,7 @@ public interface OrderMapper {
      * 派送订单
      * */
     @Update("update orders set status = 4 where id=#{id};")
-    void deliveryOrder(Long id);
+    void deliveryOrder(Orders orders);
 
     /*
      * 营业额
@@ -77,4 +79,13 @@ public interface OrderMapper {
      * 取消订单
      * */
     void cancelById(Orders orders);
+
+    void updateByStatusBeforeTime(LocalDateTime orderTime, Integer pendingPayment);
+
+    void update(Integer deliveryInProgress);
+
+    /*
+     * 查询每日金额
+     * */
+    List<Map<String, Object>> selectTurnoverStatistics(List<LocalDate> localDates);
 }

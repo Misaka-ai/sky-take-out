@@ -1,6 +1,6 @@
 package com.sky.controller.user;
 
-import com.sky.dto.OrdersPageQueryDTO;
+import com.sky.dto.OrdersDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.dto.UserOrdersPageQueryDTO;
 import com.sky.result.PageResult;
@@ -26,8 +26,8 @@ public class OrderController {
     }
 
     @PutMapping("/payment")
-    public Result<?> payment(@RequestBody OrdersPageQueryDTO ordersPageQueryDTO) {
-        orderService.payment(ordersPageQueryDTO);
+    public Result<?> payment(@RequestBody OrdersDTO ordersDTO) {
+        orderService.payment(ordersDTO);
         return Result.success();
     }
 
@@ -76,4 +76,13 @@ public class OrderController {
 
     }
 
+    /*
+     * 催单
+     * */
+    @GetMapping("reminder/{orderId}")
+    public Result<?> reminder(Long orderId) {
+
+        orderService.reminder(orderId);
+        return Result.success();
+    }
 }
